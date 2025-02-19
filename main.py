@@ -2,7 +2,7 @@ import sys
 import PySide6.QtWidgets as Qw
 import PySide6.QtCore as Qc
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QApplication, QMainWindow, QLabel, QFileDialog, QVBoxLayout, QPushButton, QWidget
+from PySide6.QtWidgets import QApplication, QMainWindow, QLabel, QFileDialog, QVBoxLayout, QPushButton, QWidget, QSizePolicy
 from PySide6.QtGui import QPixmap
 from chara_change import img_char
 
@@ -35,7 +35,7 @@ class MainWindow(Qw.QMainWindow):
     self.image_label = QLabel(self)
     self.image_label.setAlignment(Qt.AlignCenter)  # 画像を中央に配置
     main_layout.addWidget(self.image_label)
-
+    self.image_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
     # ボタン配置の水平レイアウトを作成します。
     button_layout = Qw.QHBoxLayout()
     button_layout.setAlignment(Qc.Qt.AlignmentFlag.AlignLeft)  # 左寄せ
@@ -77,7 +77,6 @@ class MainWindow(Qw.QMainWindow):
     chg = img_char(self.img_name)
     chg.color_get()
     chg.change_gray_character()
-    print(chg.imgchar)
     self.image_label.clear()
     self.image_label.setStyleSheet("color: black; font-size: 5px;")
     self.image_label.setText(chg.imgchar)

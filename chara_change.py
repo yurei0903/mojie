@@ -9,8 +9,8 @@ BLUE_MAGNIFICATION = 0.11
 GREEN_MAGNIFIATION = 0.59
 RED_MAGNIFICATION = 0.3
 FILESIZE = 100
-TAKASA = 43
-HABA = 100
+TAKASA = 86
+HABA = 200
 BAIRITU = 1.7
 def imread(filename, flags=cv2.IMREAD_COLOR, dtype=np.uint8):
   try:
@@ -49,9 +49,22 @@ def compression(gazo, gazo_name):  # 画像サイズを圧縮する関数
   return name
 class img_char():
   def __init__(self, name):
-    self.gray_char = [" ", "'", ",", "^", "-", "!", "]",
-                      "T", "?", "K", "X", "M", "&", "$", "#", "@"]
-    img = imread(name)  # 画像の読み込み
+    ori_img = imread(name)  # 画像の読み込み
+    if ori_img.shape[2] == 4:
+      # アルファチャネルを取得
+      alpha_channel = ori_img[:, :, 3]
+
+    # アルファチャンネルのマスクを作成
+      alpha_mask = alpha_channel == 0
+
+    # 透過部分を白で塗りつぶす
+      ori_img[alpha_mask] = (255, 255, 255, 255)
+
+      # アルファチャネルを除去してBGRに変換
+      img = cv2.cvtColor(ori_img, cv2.COLOR_BGRA2BGR)
+    else:
+      # アルファチャネルがない場合はそのまま
+      img = ori_img
     h, w = img.shape[:2]  # 縮小した後の画像の縦横の大きさを受け取る
     width = round(w * (TAKASA / h) * BAIRITU)
     if width < HABA:
