@@ -2,6 +2,7 @@
 import sys
 from PySide6.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QStackedWidget
 from shasin import shasinWindow
+from doga import dogaWindow
 class MainPage(QWidget):
   def __init__(self, stack_widget):
     super().__init__()
@@ -37,11 +38,11 @@ class MainWindow(QWidget):
     # 各ページを作成し、スタックウィジェットに追加
     self.main_page = MainPage(self.stack_widget)
     self.window1 = shasinWindow(self.stack_widget)
-    # self.window2 = Window2(self.stack_widget)
+    self.window2 = dogaWindow(self.stack_widget)
 
     self.stack_widget.addWidget(self.main_page)
     self.stack_widget.addWidget(self.window1)
-    # self.stack_widget.addWidget(self.window2)
+    self.stack_widget.addWidget(self.window2)
     main_layout = QVBoxLayout()
     main_layout.addWidget(self.stack_widget)
     self.setLayout(main_layout)

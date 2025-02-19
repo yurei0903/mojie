@@ -7,6 +7,8 @@ from PySide6.QtGui import QPixmap, QFont
 from chara_change import img_char
 import cv2
 import numpy as np
+from PySide6.QtMultimediaWidgets import QVideoWidget
+from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput
 # レイアウト設定用変数
 QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
 
@@ -20,7 +22,7 @@ def imread(filename, flags=cv2.IMREAD_UNCHANGED, dtype=np.uint8):
   except Exception as e:
     print(e)
     return None
-class shasinWindow(QMainWindow):
+class dogaWindow(QMainWindow):
 
   # コンストラクタ(初期化)
 
@@ -34,7 +36,7 @@ class shasinWindow(QMainWindow):
 
     self.fixed_size = Qc.QSize(200, 200)
     self.img_name = ""
-    self.setWindowTitle('アスキー画像作成プログラム')
+    self.setWindowTitle('アスキー動画作成プログラム')
     rect = Qc.QRect()  # Rect: Rectangle (長方形・矩形)
     rect.setSize(Qc.QSize(640, 480))      # サイズ設定
     rect.moveCenter(Qc.QPoint(600, 350))  # 位置設定
@@ -52,12 +54,12 @@ class shasinWindow(QMainWindow):
     self.shasin_Layout.addLayout(button_layout)  # メインレイアウトにボタンレイアウトを追加
 
     # 「実行」ボタンの生成と設定
-    self.btn_run = Qw.QPushButton('画像ファイルを開く')
+    self.btn_run = Qw.QPushButton('動画ファイルを開く')
     self.btn_run.setMinimumSize(50, 20)
     self.btn_run.setMaximumSize(100, 20)
     self.btn_run.setSizePolicy(sp_exp, sp_exp)
     button_layout.addWidget(self.btn_run)
-    self.btn_run.clicked.connect(self.image_get)
+    self.btn_run.clicked.connect(self.movie_open)
 
     # 「クリア」ボタンの生成と設定
     self.btn_change = Qw.QPushButton('アスキ-に変換')
@@ -67,7 +69,7 @@ class shasinWindow(QMainWindow):
     button_layout.addWidget(self.btn_change)
 
     self.btn_change.clicked.connect(self.image_change)
-
+    # 選択画面にもどるボタン
     self.btn_mainback = Qw.QPushButton('選択画面に戻る')
     self.btn_mainback.setMinimumSize(100, 20)
     self.btn_mainback.setMaximumSize(200, 20)
@@ -75,24 +77,57 @@ class shasinWindow(QMainWindow):
     button_layout.addWidget(self.btn_mainback)
     self.btn_mainback.clicked.connect(self.goto_main)
 
+    # ビデオ表示ウィジェット
+    self.video_widget = QVideoWidget()
+
+    # メディアプレーヤー
+    self.media_player = QMediaPlayer()
+    self.audio_output = QAudioOutput()
+    self.media_player.setAudioOutput(self.audio_output)
+
+    # メディアプレーヤーにビデオを表示するウィジェットを設定
+    self.media_player.setVideoOutput(self.video_widget)
+
+    # 再生、停止、ファイル選択のボタン
+    self.play_button = QPushButton("Play")
+    self.play_button.clicked.connect(self.play_video)
+
+    self.stop_button = QPushButton("Stop")
+    self.stop_button.clicked.connect(self.media_player.stop)
+
+    self.image_label.addWidget(self.video_widget)
+    self.image_label.addWidget(self.open_button)
+    self.image_label.addWidget(self.play_button)
+    self.image_label.addWidget(self.stop_button)
+
     # ステータスバー
     self.sb_status = Qw.QStatusBar()
     self.setStatusBar(self.sb_status)
     self.sb_status.setSizeGripEnabled(False)
     self.sb_status.showMessage('プログラムを起動しました。')
 
-  def image_get(self):
+  def movie_open(self):
     file_name, _ = QFileDialog.getOpenFileName(
-        self, "画像を選択", "", "Image Files (*.png *.jpg *.jpeg *.bmp *.gif)")
-
+        self, "動画を選択", "", "Video Files (*.mp4 *.avi *.mkv)")
     if file_name:
-      # 画像をロードして表示
-
-      pixmap = QPixmap(file_name)
-      scaled_pixmap = pixmap.scaled(
-          self.fixed_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-      self.image_label.setPixmap(scaled_pixmap)
+      self.media_player.setSource(Qc.QUrl.fromLocalFile(file_name))
     self.img_name = file_name
+
+    self.setLayout(self.image_label)
+  # def image_get(self):
+  #   file_name, _ = QFileDialog.getOpenFileName(
+  #       self, "動画を選択", "", "Movie Files (*.mp4 *.avi *.wmv *.mpg *.wmv *.wmv)")
+
+  #   if file_name:
+  #     # 画像をロードして表示
+
+  #     pixmap = QPixmap(file_name)
+  #     scaled_pixmap = pixmap.scaled(
+  #         self.fixed_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+  #     self.image_label.setPixmap(scaled_pixmap)
+  #   self.img_name = file_name
+  def play_video(self):
+    self.media_player.play()
 
   def goto_main(self):
     self.stack_widget.setCurrentIndex(0)
