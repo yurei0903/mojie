@@ -101,6 +101,8 @@ class img_char():
           divide -= 1
         self.imgchar += self.gray_char[divide]
         a += 1
+    with open("kako_gazo", mode='w') as f:
+      f.write("")
 
   def compression(self, gazo, gazo_name):  # 画像サイズを圧縮する関数
     size = os.path.getsize(gazo_name)
