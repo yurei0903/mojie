@@ -9,10 +9,10 @@ BLUE_MAGNIFICATION = 0.11
 GREEN_MAGNIFIATION = 0.59
 RED_MAGNIFICATION = 0.3
 FILESIZE = 100
-TAKASA = 100
-HABA = 800
+TAKASA = 172
+HABA = 400
 BAIRITU = 1.7
-def imread(filename, flags=cv2.IMREAD_COLOR, dtype=np.uint8):
+def imread(filename, flags=cv2.IMREAD_UNCHANGED, dtype=np.uint8):
   try:
     n = np.fromfile(filename, dtype)
     img = cv2.imdecode(n, flags)
@@ -40,7 +40,7 @@ def imwrite(filename, img, params=None):
 def compression(gazo, gazo_name):  # 画像サイズを圧縮する関数
   size = os.path.getsize(gazo_name)
   quality = 90
-  name = 'asshukugazo.png'
+  name = 'kako_gazo/asshukugazo.jpg'
   while size > FILESIZE * 1000:
     imwrite(name, gazo, [int(cv2.IMWRITE_JPEG_QUALITY), quality])
     size = os.path.getsize(name)
@@ -50,7 +50,6 @@ def compression(gazo, gazo_name):  # 画像サイズを圧縮する関数
 class img_char():
   def __init__(self, name):
     ori_img = imread(name)  # 画像の読み込み
-    imwrite("lena_opencv.png", ori_img)
     if ori_img.shape[2] == 4:
       # アルファチャネルを取得
       alpha_channel = ori_img[:, :, 3]
@@ -66,6 +65,7 @@ class img_char():
 
     h, w = img.shape[:2]  # 縮小した後の画像の縦横の大きさを受け取る
     width = round(w * (TAKASA / h) * BAIRITU)
+    print(width)
     if width < HABA:
       self.result = cv2.resize(img, dsize=(width, TAKASA))
     else:
@@ -77,7 +77,6 @@ class img_char():
     self.gray_char = [" ", "'", ",", "^", "-", "!", "]",
                       "T", "?", "K", "X", "M", "&", "$", "#", "@"]
     self.imgchar = ""
-    imwrite("lena_opencv_red.png", img)
 
   def color_get(self):
     image = imread(self.img_name)
@@ -91,18 +90,22 @@ class img_char():
 
   def change_gray_character(self):  # 画像を文字に置き換える関数
     self.imgchar = ""
+
     for h in range(self.height):
-      self.imgchar = self.imgchar + "\n"
+      a = 0
+
+      self.imgchar += ".\n"
       for w in range(self.width):
         divide = 0
         while self.gray_value[h][w] + 16 * divide > 0:
           divide -= 1
         self.imgchar += self.gray_char[divide]
+        a += 1
 
   def compression(self, gazo, gazo_name):  # 画像サイズを圧縮する関数
     size = os.path.getsize(gazo_name)
     quality = 90
-    name = 'asshukugazo.jpg'
+    name = 'kako_gazo/asshukugazo.jpg'
     while size > FILESIZE * 1000:
       imwrite(name, gazo, [int(cv2.IMWRITE_JPEG_QUALITY), quality])
       size = os.path.getsize(name)
