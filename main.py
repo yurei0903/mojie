@@ -4,7 +4,7 @@ import PySide6.QtCore as Qc
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication, QMainWindow, QLabel, QFileDialog, QVBoxLayout, QPushButton, QWidget
 from PySide6.QtGui import QPixmap
-import chara_change as asc
+from chara_change import img_char
 
 # レイアウト設定用変数
 
@@ -23,6 +23,7 @@ class MainWindow(Qw.QMainWindow):
     rect = Qc.QRect()  # Rect: Rectangle (長方形・矩形)
     rect.setSize(Qc.QSize(640, 480))      # サイズ設定
     rect.moveCenter(Qc.QPoint(600, 350))  # 位置設定
+
     self.setGeometry(rect)
 
     # メインレイアウトの設定
@@ -55,7 +56,7 @@ class MainWindow(Qw.QMainWindow):
     self.btn_change.setSizePolicy(sp_exp, sp_exp)
     button_layout.addWidget(self.btn_change)
 
-    self.btn_change.clicked.connect(self.img_name)
+    self.btn_change.clicked.connect(self.image_change)
 
     # ステータスバー
     self.sb_status = Qw.QStatusBar()
@@ -73,14 +74,19 @@ class MainWindow(Qw.QMainWindow):
     self.img_name = file_name
 
   def image_change(self):
-    chg = asc.img_char(self.img_name)
-    asc.img_char.color_get()
-    asc.img_char.change_gray_character()
+    chg = img_char(self.img_name)
+    chg.color_get()
+    chg.change_gray_character()
+    print(chg.imgchar)
+    self.image_label.clear()
+    self.image_label.setStyleSheet("color: black; font-size: 5px;")
+    self.image_label.setText(chg.imgchar)
 
 
 # 本体
 if __name__ == '__main__':
   app = Qw.QApplication(sys.argv)
   main_window = MainWindow()
+  main_window.showMaximized()
   main_window.show()
   sys.exit(app.exec())

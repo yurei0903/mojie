@@ -1,3 +1,4 @@
+import os
 import cv2  # opencvの読み込み
 import numpy as np  # numpyの読み込み
 # 定数
@@ -8,24 +9,49 @@ BLUE_MAGNIFICATION = 0.11
 GREEN_MAGNIFIATION = 0.59
 RED_MAGNIFICATION = 0.3
 FILESIZE = 100
-TAKASA = 430
-HABA = 998
+TAKASA = 43
+HABA = 100
 BAIRITU = 1.7
+def imread(filename, flags=cv2.IMREAD_COLOR, dtype=np.uint8):
+  try:
+    n = np.fromfile(filename, dtype)
+    img = cv2.imdecode(n, flags)
+    return img
+  except Exception as e:
+    print(e)
+    return None
+
+def imwrite(filename, img, params=None):
+  try:
+    ext = os.path.splitext(filename)[1]
+    result, n = cv2.imencode(ext, img, params)
+
+    if result:
+      with open(filename, mode='w+b') as f:
+        n.tofile(f)
+      return True
+    else:
+      return False
+  except Exception as e:
+    print(e)
+    return False
+
+
 def compression(gazo, gazo_name):  # 画像サイズを圧縮する関数
   size = os.path.getsize(gazo_name)
   quality = 90
   name = 'asshukugazo.jpg'
   while size > FILESIZE * 1000:
-    cv2.imwrite(name, gazo, [int(cv2.IMWRITE_JPEG_QUALITY), quality])
+    imwrite(name, gazo, [int(cv2.IMWRITE_JPEG_QUALITY), quality])
     size = os.path.getsize(name)
     quality -= 1
-  cv2.imwrite(name, gazo, [int(cv2.IMWRITE_JPEG_QUALITY), quality])
+  imwrite(name, gazo, [int(cv2.IMWRITE_JPEG_QUALITY), quality])
   return name
 class img_char():
   def __init__(self, name):
     self.gray_char = [" ", "'", ",", "^", "-", "!", "]",
                       "T", "?", "K", "X", "M", "&", "$", "#", "@"]
-    img = cv2.imread(name)  # 画像の読み込み
+    img = imread(name)  # 画像の読み込み
     h, w = img.shape[:2]  # 縮小した後の画像の縦横の大きさを受け取る
     width = round(w * (TAKASA / h) * BAIRITU)
     if width < HABA:
@@ -40,8 +66,8 @@ class img_char():
                       "T", "?", "K", "X", "M", "&", "$", "#", "@"]
     self.imgchar = ""
 
-  def color_get(self, imge, gure):
-    image = cv2.imread(imge)
+  def color_get(self):
+    image = imread(self.img_name)
     for h in range(self.height):
       for w in range(self.width):
         self.color[h][w][BLUE] = image[h, w, BLUE]
@@ -65,8 +91,8 @@ class img_char():
     quality = 90
     name = 'asshukugazo.jpg'
     while size > FILESIZE * 1000:
-      cv2.imwrite(name, gazo, [int(cv2.IMWRITE_JPEG_QUALITY), quality])
+      imwrite(name, gazo, [int(cv2.IMWRITE_JPEG_QUALITY), quality])
       size = os.path.getsize(name)
       quality -= 1
-    cv2.imwrite(name, gazo, [int(cv2.IMWRITE_JPEG_QUALITY), quality])
+    imwrite(name, gazo, [int(cv2.IMWRITE_JPEG_QUALITY), quality])
     return name
