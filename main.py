@@ -78,7 +78,7 @@ class MainWindow(Qw.QMainWindow):
     chg.color_get()
     chg.change_gray_character()
     self.image_label.clear()
-    self.image_label.setStyleSheet("color: black; font-size: 5px;")
+    self.image_label.setStyleSheet("color: black; font-size: 2px;")
     self.image_label.setText(chg.imgchar)
 
 

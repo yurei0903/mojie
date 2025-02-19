@@ -9,8 +9,8 @@ BLUE_MAGNIFICATION = 0.11
 GREEN_MAGNIFIATION = 0.59
 RED_MAGNIFICATION = 0.3
 FILESIZE = 100
-TAKASA = 86
-HABA = 200
+TAKASA = 100
+HABA = 800
 BAIRITU = 1.7
 def imread(filename, flags=cv2.IMREAD_COLOR, dtype=np.uint8):
   try:
@@ -40,7 +40,7 @@ def imwrite(filename, img, params=None):
 def compression(gazo, gazo_name):  # 画像サイズを圧縮する関数
   size = os.path.getsize(gazo_name)
   quality = 90
-  name = 'asshukugazo.jpg'
+  name = 'asshukugazo.png'
   while size > FILESIZE * 1000:
     imwrite(name, gazo, [int(cv2.IMWRITE_JPEG_QUALITY), quality])
     size = os.path.getsize(name)
@@ -50,21 +50,20 @@ def compression(gazo, gazo_name):  # 画像サイズを圧縮する関数
 class img_char():
   def __init__(self, name):
     ori_img = imread(name)  # 画像の読み込み
+    imwrite("lena_opencv.png", ori_img)
     if ori_img.shape[2] == 4:
       # アルファチャネルを取得
       alpha_channel = ori_img[:, :, 3]
-
     # アルファチャンネルのマスクを作成
-      alpha_mask = alpha_channel == 0
-
+      alpha_mask = np.where(alpha_channel == 0)
     # 透過部分を白で塗りつぶす
       ori_img[alpha_mask] = (255, 255, 255, 255)
-
       # アルファチャネルを除去してBGRに変換
       img = cv2.cvtColor(ori_img, cv2.COLOR_BGRA2BGR)
     else:
       # アルファチャネルがない場合はそのまま
       img = ori_img
+
     h, w = img.shape[:2]  # 縮小した後の画像の縦横の大きさを受け取る
     width = round(w * (TAKASA / h) * BAIRITU)
     if width < HABA:
@@ -78,6 +77,7 @@ class img_char():
     self.gray_char = [" ", "'", ",", "^", "-", "!", "]",
                       "T", "?", "K", "X", "M", "&", "$", "#", "@"]
     self.imgchar = ""
+    imwrite("lena_opencv_red.png", img)
 
   def color_get(self):
     image = imread(self.img_name)
