@@ -14,12 +14,12 @@ class MainPage(QWidget):
     to_window1_button = QPushButton("画像をアスキーにする")
     to_window1_button.clicked.connect(self.goto_window1)
 
-    # ボタンを作成して、ウィンドウ2に遷移するイベントを設定
-    to_window2_button = QPushButton("動画をアスキーにする")
-    to_window2_button.clicked.connect(self.goto_window2)
+    # # ボタンを作成して、ウィンドウ2に遷移するイベントを設定
+    # to_window2_button = QPushButton("動画をアスキーにする")
+    # to_window2_button.clicked.connect(self.goto_window2)
 
     layout.addWidget(to_window1_button)
-    layout.addWidget(to_window2_button)
+    # layout.addWidget(to_window2_button)
     self.setLayout(layout)
 
   def goto_window1(self):

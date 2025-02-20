@@ -48,6 +48,12 @@ class dogaWindow(QMainWindow):
     self.image_label.setAlignment(Qt.AlignCenter)  # 画像を中央に配置
     self.shasin_Layout.addWidget(self.image_label)
     self.image_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+
+    # ボタン配置の水平レイアウトを作成します。
+    moviebutton_layout = Qw.QHBoxLayout()
+    moviebutton_layout.setAlignment(Qc.Qt.AlignmentFlag.AlignLeft)  # 左寄せ
+    self.shasin_Layout.addLayout(moviebutton_layout)  # メインレイアウトにボタンレイアウトを追加
+
     # ボタン配置の水平レイアウトを作成します。
     button_layout = Qw.QHBoxLayout()
     button_layout.setAlignment(Qc.Qt.AlignmentFlag.AlignLeft)  # 左寄せ
@@ -83,22 +89,22 @@ class dogaWindow(QMainWindow):
     # メディアプレーヤー
     self.media_player = QMediaPlayer()
     self.audio_output = QAudioOutput()
+
     self.media_player.setAudioOutput(self.audio_output)
 
     # メディアプレーヤーにビデオを表示するウィジェットを設定
     self.media_player.setVideoOutput(self.video_widget)
 
     # 再生、停止、ファイル選択のボタン
-    self.play_button = QPushButton("Play")
+    self.play_button = QPushButton("再生 ▶")
     self.play_button.clicked.connect(self.play_video)
 
-    self.stop_button = QPushButton("Stop")
+    self.stop_button = QPushButton("停止 ■ ■")
     self.stop_button.clicked.connect(self.media_player.stop)
 
-    self.image_label.addWidget(self.video_widget)
-    self.image_label.addWidget(self.open_button)
-    self.image_label.addWidget(self.play_button)
-    self.image_label.addWidget(self.stop_button)
+    moviebutton_layout.addWidget(self.video_widget)
+    moviebutton_layout.addWidget(self.play_button)
+    moviebutton_layout.addWidget(self.stop_button)
 
     # ステータスバー
     self.sb_status = Qw.QStatusBar()
@@ -112,8 +118,7 @@ class dogaWindow(QMainWindow):
     if file_name:
       self.media_player.setSource(Qc.QUrl.fromLocalFile(file_name))
     self.img_name = file_name
-
-    self.setLayout(self.image_label)
+    # self.setLayout(self.image_label)
   # def image_get(self):
   #   file_name, _ = QFileDialog.getOpenFileName(
   #       self, "動画を選択", "", "Movie Files (*.mp4 *.avi *.wmv *.mpg *.wmv *.wmv)")
