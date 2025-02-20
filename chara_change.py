@@ -75,7 +75,7 @@ class img_char():
     self.gray_value = np.zeros((self.height, self.width))
     self.color = np.zeros((self.height, self.width, 3))
     self.gray_char = [" ", "'", ",", "^", "-", "!", "]",
-                      "T", "?", "K", "X", "M", "&", "$", "#", "@"]
+                      "=", "L", "T", "?", "M", "&", "$", "#", "@"]
     self.imgchar = ""
 
   def color_get(self):
