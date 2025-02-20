@@ -7,6 +7,7 @@ from PySide6.QtGui import QPixmap, QFont
 from chara_change import img_char
 import cv2
 import numpy as np
+import pyperclip
 # レイアウト設定用変数
 QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
 
@@ -51,7 +52,7 @@ class shasinWindow(QMainWindow):
     button_layout.setAlignment(Qc.Qt.AlignmentFlag.AlignLeft)  # 左寄せ
     self.shasin_Layout.addLayout(button_layout)  # メインレイアウトにボタンレイアウトを追加
 
-    # 「実行」ボタンの生成と設定
+    # 「画像ファイルを開く」ボタンの生成と設定
     self.btn_run = Qw.QPushButton('画像ファイルを開く')
     self.btn_run.setMinimumSize(50, 20)
     self.btn_run.setMaximumSize(100, 20)
@@ -59,12 +60,20 @@ class shasinWindow(QMainWindow):
     button_layout.addWidget(self.btn_run)
     self.btn_run.clicked.connect(self.image_get)
 
-    # 「クリア」ボタンの生成と設定
+    # 「アスキーに変換」ボタンの生成と設定
     self.btn_change = Qw.QPushButton('アスキ-に変換')
     self.btn_change.setMinimumSize(100, 20)
     self.btn_change.setMaximumSize(200, 20)
     self.btn_change.setSizePolicy(sp_exp, sp_exp)
     button_layout.addWidget(self.btn_change)
+
+    # 「コピー」ボタンの生成と設定
+    self.btn_run = Qw.QPushButton('コピー')
+    self.btn_run.setMinimumSize(50, 20)
+    self.btn_run.setMaximumSize(100, 20)
+    self.btn_run.setSizePolicy(sp_exp, sp_exp)
+    button_layout.addWidget(self.btn_run)
+    self.btn_run.clicked.connect(self.copy_aski)
 
     self.btn_change.clicked.connect(self.image_change)
 
@@ -98,11 +107,14 @@ class shasinWindow(QMainWindow):
     self.stack_widget.setCurrentIndex(0)
 
   def image_change(self):
-    chg = img_char(self.img_name)
-    chg.color_get()
-    chg.change_gray_character()
+    self.chg = img_char(self.img_name)
+
+    self.chg.color_get()
+    self.chg.change_gray_character()
     self.image_label.clear()
     self.image_label.setStyleSheet(
         "color: black; font-size: 2px;font-family:'Courier'")
+    self.image_label.setText(self.chg.imgchar)
 
-    self.image_label.setText(chg.imgchar)
+  def copy_aski(self):
+    pyperclip.copy(self.chg.imgchar)
